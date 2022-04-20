@@ -25,16 +25,12 @@ Moralis.Cloud.define("getEthTransactions", async(request) => {
   const logger = Moralis.Cloud.getLogger();
   const address = request.params.address.toLowerCase();
   const squery = new Moralis.Query("_AddressSyncStatus");
-  logger.info('logging begin');
   squery.equalTo("address", address);
   const queryCount = await squery.count();
 
   if (Number(queryCount) <= 0){
-    logger.info("begin watch");
     await Moralis.Cloud.run("watchEthAddress", {address: address, sync_historical: true}, {useMasterKey: true});
-    logger.info("end watch");
   }
-  logger.info(await squery.count());
 
   const query1 = new Moralis.Query("EthTransactions");
   query1.equalTo("from_address", address);
